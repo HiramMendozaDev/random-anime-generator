@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/img/favicon.png" type="image/x-icon">
+    <title>Random Anime Generator</title>
+    <style>
+        /* Basic css mods */
+
+        .hamster-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .hamster {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .hamster-text {
+            margin: 0;
+            text-align: center;
+        }
+
+        .anime-image {
+            width: 100%;
+        }
+
+        .anime-data>*,
+        .anime-title,
+        .anime-synopsis,
+        .footer-text {
+            margin: 0;
+        }
+
+        /* Mobile First */
+
+        .app-title-wrapper {
+            text-align: center;
+        }
+
+        .anime-title {
+            text-align: center;
+        }
+
+        #anime-fetch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .anime-button {
+            width: 100%;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .anime-data {
+            flex-basis: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            gap: 0.5rem;
+        }
+
+        /*Media queries*/
+
+        @media only screen and (min-width: 400px) {
+
+            #anime-fetch {
+                gap: 1.5rem;
+            }
+
+            .anime-image {
+                max-width: 360px;
+                width: 80%;
+                margin: 0 auto;
+            }
+
+            .anime-data {
+                gap: 1rem;
+            }
+
+        }
+
+        @media only screen and (min-width: 800px) {
+
+            #anime-fetch {
+                gap: 2rem;
+            }
+
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+</head>
+
+<body>
+    <div class="app-title-wrapper">
+        <h1>Random Anime Generator</h1>
+        <p class="page-info">This project fetches and displays information about a random anime using the <a
+                href="https://jikan.moe/" target="_blank" rel="noopener noreferrer">Jikan API</a>, which provides data
+            from <a href="https://myanimelist.net/" target="_blank" rel="noopener noreferrer">MyAnimeList</a>. It
+            selects a
+            random anime ID, retrieves its full details, and presents key information such as title, synopsis, genres,
+            score, and more. The project is developed with <strong>vanilla JavaScript</strong> and styled using the <a
+                href="https://simplecss.org/">SimpleCSS</a> framework.</p>
+
+        <p class="page-info">Note: Some results may include NSFW tags.</p>
+    </div>
+
+    <div id="anime-fetch">
+    </div>
+
+    <footer>
+        <p class="footer-text">Created by <a href="https://github.com/HiramMendozaDev/" target="_blank">Hiram
+                Mendoza</a>.</p>
+        <p class="footer-text">
+            Favicon icon by <a href="https://www.flaticon.com/authors/freepik" target="_blank"
+                rel="noopener noreferrer">Freepik</a>
+            and hamster icon by <a href="https://www.flaticon.com/authors/medz" target="_blank">MEDZ</a> at <a
+                href="https://www.flaticon.com/" target="_blank">Flaticon</a>.
+        </p>
+
+
+    </footer>
+    <script>
+
+        function generateRandomAnimeID() {
+            const randomId = Math.floor(Math.random() * 50000) + 1;
+            return randomId;
+        };
+
+        function fetchAnimeData(id) {
+            return fetch(`https://api.jikan.moe/v4/anime/${id}/full`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Anime with ID: ${id} doesn't exist or is disabled.`);
+
+                    }
+                    return response.json();
+                })
+                .then(anime => {
+                    //console.log(anime.data); test
+                    return anime.data
+                })
+        }
+
+        function tryFetchingAnime() {
+            const id = generateRandomAnimeID();
+            fetchAnimeData(id) //ID value for manual testing
+                .then(anime => {
+                    if (anime) {
+                        renderAnime(anime);
+                    }
+                })
+                .catch(() => {
+                    const animeFetchDiv = document.querySelector("#anime-fetch").innerHTML = `<div class="hamster-wrapper">
+                    <p class="hamster-text"><b>Hamster finder says:</b> Searching... please wait. We're working as fast as our little hamster hands can.</p>
+                     <img class="hamster" src="/img/mailman-hamster.png" alt="cute-mailman-hamster">
+                    </div>
+                    `;
+                    setTimeout(tryFetchingAnime, 350);
+                });
+        }
+
+
+        function renderAnime(anime) {
+            const animeFetchDiv = document.querySelector("#anime-fetch");
+            if (anime) {
+                animeFetchDiv.innerHTML = `
+                <button class="anime-button" onclick="tryFetchingAnime()">New Anime</button>
+                <h2 class="anime-title">${anime.title}</h2>
+                <span class="anime-id"><b>MAL ID:</b> ${anime.mal_id}</span>
+                <img class="anime-image" src="${anime.images.webp.large_image_url}" alt="${anime.title} cover image.">
+                <p class="anime-synopsis"><b>Synopsis:</b> ${anime.synopsis}</p> 
+                <div class="anime-data">
+                <p><b>Score:</b> ${anime.score}</p>
+                <p><b>Episodes:</b> ${anime.episodes}</p>
+                <p><b>Duration:</b> ${anime.duration}</p>
+                <p><b>Genres:</b> ${anime.genres.map(genre => genre.name).join(", ")}</p>
+                <p><b>Status:</b> ${anime.status}</p>
+                <a href="https://myanimelist.net/anime/${anime.mal_id}" target="_blank">View on MAL</a>    
+                </div>
+                `;
+            }
+        };
+
+        tryFetchingAnime();
+
+    </script>
+
+</html>
