@@ -1,0 +1,89 @@
+ /* Basic css mods */
+
+ .hamster-wrapper {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     gap: 1rem;
+ }
+
+ .hamster {
+     width: 100%;
+     max-width: 300px;
+ }
+
+ .hamster-text {
+     margin: 0;
+     text-align: center;
+ }
+
+ .anime-image {
+     width: 100%;
+ }
+
+ .anime-data>*,
+ .anime-title,
+ .anime-synopsis,
+ .footer-text {
+     margin: 0;
+ }
+
+ /* Mobile First */
+
+ .app-title-wrapper {
+     text-align: center;
+ }
+
+ .anime-title {
+     text-align: center;
+ }
+
+ #anime-fetch {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     gap: 1rem;
+ }
+
+ .anime-button {
+     width: 100%;
+     padding: 0.5rem 1rem;
+     cursor: pointer;
+     font-weight: bold;
+ }
+
+ .anime-data {
+     flex-basis: 100%;
+     display: flex;
+     flex-wrap: wrap;
+     justify-content: flex-start;
+     gap: 0.5rem;
+ }
+
+ /*Media queries*/
+
+ @media only screen and (min-width: 400px) {
+
+     #anime-fetch {
+         gap: 1.5rem;
+     }
+
+     .anime-image {
+         max-width: 360px;
+         width: 80%;
+         margin: 0 auto;
+     }
+
+     .anime-data {
+         gap: 1rem;
+     }
+
+ }
+
+ @media only screen and (min-width: 800px) {
+
+     #anime-fetch {
+         gap: 2rem;
+     }
+
+ }
