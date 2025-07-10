@@ -14,6 +14,12 @@ async function fetchAnimeData(animeIdNumber) {
 }
 
 function renderAnime(anime) {
+
+    function returnGenres() {
+        const genres = anime.genres;
+        return genres.map(genre => genre.name).join(", ")
+    }
+
     const animeFetchDiv = document.querySelector("#anime-fetch");
     if (anime) {
         animeFetchDiv.innerHTML = `
@@ -27,7 +33,7 @@ function renderAnime(anime) {
                 <p><b>Score:</b> ${anime.score}</p>
                 <p><b>Episodes:</b> ${anime.episodes}</p>
                 <p><b>Duration:</b> ${anime.duration}</p>
-                <p><b>Genres:</b> ${anime.genres.map(genre => genre.name).join(", ")}</p>
+                <p><b>Genres:</b> ${returnGenres()}</p>
                 <p><b>Status:</b> ${anime.status}</p>
                 <a href="https://myanimelist.net/anime/${anime.mal_id}" target="_blank">View on MAL</a>    
                 </div>
@@ -45,12 +51,27 @@ function renderPleaseWaitHamster() {
         `;
 }
 
+function excludeGenres(anime, renderingFunction) {
+    const genres = [];
+    anime.genres.forEach(genre => {
+        genres.push(genre.name)
+    });
+
+    if (!genres.includes("Hentai") || genres.length === 0) {
+        renderingFunction();
+    } else {
+        renderPleaseWaitHamster();
+        setTimeout(tryFetchingAnime, 350);
+    }
+}
+
+//Core func
+
 function tryFetchingAnime() {
     const id = generateRandomAnimeID(50000);
     fetchAnimeData(id) //ID value for manual testing
         .then(anime => {
-            console.log(anime);
-            renderAnime(anime);
+            excludeGenres(anime, () => renderAnime(anime));
         })
         .catch(() => {
             renderPleaseWaitHamster();
