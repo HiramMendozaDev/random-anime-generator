@@ -17,7 +17,7 @@ This is a minimalist web app that fetches and displays information about a rando
 
 ## Demo
 
-You can see all the project photos [here](/img/screenshots/).
+You can see all the project photos [here](/img/screenshots/)
 
 You can use Random Anime Generator [here](https://hirammendozadev.github.io/random-anime-generator/)
 
